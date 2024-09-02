@@ -1,0 +1,13 @@
+fastapi_app/
+│
+├── static/                  # Static files like CSS and JavaScript
+│   ├── css/
+│   │   └── styles.css       # CSS file for styling
+│   └── js/
+│       └── main.js          # JavaScript file for AJAX
+├── templates/
+│   └── index.html           # HTML file for the front-end
+├── main.py                  # FastAPI entry point
+├── database.py              # Database connection setup
+├── clients.py               # Endpoint to fetch and process client data
+└── requirements.txt      

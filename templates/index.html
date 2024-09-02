@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Cost Data</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS CDN -->
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!-- jQuery UI CSS CDN for Date Picker -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.25em;
+            font-weight: 500;
+            color: #343a40;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .thead-dark th {
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .loading, .error-message {
+            text-align: center;
+            font-size: 16px;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .date-picker-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+    /* Modal Styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+
+
+    .filter-section {
+    margin-bottom: 20px;
+}
+
+.checkbox-container label {
+    display: block;
+}
+
+
+
+/* Styles for the table cell containing the spinner */
+.spinner-cell {
+    padding: 0; /* Remove any padding */
+}
+
+/* Container to center both the text and spinner */
+.spinner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Space between text and spinner */
+    width: 100%;
+    height: 100px; /* Adjust height to suit your needs */
+    text-align: center;
+}
+
+/* Beautiful gradient spinner styling */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0, 0, 0, 0.1); /* Light grey border */
+    border-top: 4px solid #3498db; /* Blue gradient color */
+    border-radius: 50%;
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Center-align text within table cells */
+.table td, .table th {
+    text-align: center;
+    vertical-align: middle; /* Center vertically */
+}
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Client Cost Data</h1>
+        
+        <!-- Date Picker Section -->
+        <div class="date-picker-container">
+            <input type="text" id="startDate" placeholder="Start Date" class="form-control date-picker">
+            <input type="text" id="endDate" placeholder="End Date" class="form-control date-picker">
+            <button id="loadData" class="btn btn-primary">>></button>
+        </div>
+        
+        <div class="table-container">
+            <table class="table table-striped table-bordered table-hover" id="clientTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Client</th>
+                        <th>Cost</th>
+                        <th>Handler Name breakdown</th>
+                        <th>Email breakdown</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="loading">
+                        <td colspan="8" class="spinner-cell">
+                            <div class="spinner-container">
+                               
+                                <div class="spinner"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<!-- Add this in your HTML, e.g., in the body
+<div id="loadingSpinner" >
+    <img src="spinner.gif" alt="Loading...">
+</div> -->
+
+    <!-- <button id="fetchDataBtn" 
+    data-client-id="ec1f0b3f0e8d4695d444553a661be5cf" 
+    data-task-name="1 Custom Tasks" 
+    class="btn btn-info mt-3">Fetch Data and Show Breakdown</button> -->
+<!-- Modal Structure -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <table id="dataTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Breaking_column</th>
+                    <th>Task Name</th>
+                    <th>Cost</th>
+                    <th>Message Count</th>
+                </tr>
+            </thead>
+            <tbody id="breakdownTableBody">
+            </tbody>
+        </table>
+    </div>
+</div> 
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; Dhananjayan </p>
+    </footer>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- jQuery UI CDN for Date Picker -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- Bootstrap JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- DataTables JS CDN -->
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+ 
+
+
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
