@@ -74,5 +74,6 @@ Ensure that you have all testing dependencies installed by adding them to your `
 -![Drill down features for cost with date, email , handler](https://github.com/dhananjayan-r/FLAT_world_api/blob/main/app_features/Screenshot%20from%202024-09-02%2013-26-28.png)
 - How the Breakdown looks when clicked selective breakdown
 -![How the Breakdown looks when clicked selective breakdown](https://github.com/dhananjayan-r/FLAT_world_api/blob/main/app_features/Screenshot%20from%202024-09-02%2013-23-45.png)
-
+- Date picker
+-![date picker](https://github.com/dhananjayan-r/FLAT_world_api/blob/main/app_features/Screenshot%20from%202024-09-02%2013-50-03.png)
 
