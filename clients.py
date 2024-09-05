@@ -85,7 +85,7 @@ def calculate_detailed_costs(titlex):
         task_id = chat_taskid_map.get(chat_id)
         form_handler = taskid_formhand_map.get(task_id)
         if form_handler:
-            handler_name = title_handname_map.get(form_handler, "Unknown Handler")
+            handler_name = title_handname_map.get(form_handler, "Unknown Handler").split(", dtype:")[0]
             task_title = title_taskid_map.get(task_id, "Unknown Task")
 
             if handler_name not in handlers_cost:
